@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            <h2>Мои занятия</h2>
+            
+            <ul class="nav nav-tabs mb-4">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#upcoming">Предстоящие</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#past">Прошедшие</a>
+                </li>
+            </ul>
+            
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="upcoming">
+                    {% if upcoming_lessons %}
+                        <div class="list-group">
+                            {% for lesson in upcoming_lessons %}
+                            <div class="list-group-item mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5>{{ lesson.topic }}</h5>
+                                        <p class="mb-1">
+                                            <strong>Когда:</strong> 
+                                            {{ lesson.datetime|date:"l, j F Y" }} 
+                                            в {{ lesson.datetime|time }}
+                                        </p>
+                                        <p class="mb-1">
+                                            <strong>Продолжительность:</strong> 
+                                            {{ lesson.duration }} минут
+                                        </p>
+                                        {% if is_tutor %}
+                                        <p class="mb-1">
+                                            <strong>Ученики:</strong>
+                                            {% for student in lesson.students.all %}
+                                                {{ student.user.get_full_name }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                        {% else %}
+                                        <p class="mb-1">
+                                            <strong>Репетитор:</strong>
+                                            {{ lesson.tutor.user.get_full_name }}
+                                        </p>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'lesson_detail' lesson.id %}" class="btn btn-sm btn-outline-primary">
+                                            Подробнее
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            Нет предстоящих занятий
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="tab-pane fade" id="past">
+                    {% if past_lessons %}
+                        <div class="list-group">
+                            {% for lesson in past_lessons %}
+                            <div class="list-group-item mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5>{{ lesson.topic }}</h5>
+                                        <p class="mb-1">
+                                            <strong>Когда было:</strong> 
+                                            {{ lesson.datetime|date:"l, j F Y" }} 
+                                            в {{ lesson.datetime|time }}
+                                        </p>
+                                        {% if is_tutor %}
+                                        <p class="mb-1">
+                                            <strong>Ученики:</strong>
+                                            {% for student in lesson.students.all %}
+                                                {{ student.user.get_full_name }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                        {% else %}
+                                        <p class="mb-1">
+                                            <strong>Репетитор:</strong>
+                                            {{ lesson.tutor.user.get_full_name }}
+                                        </p>
+                                        {% endif %}
+                                        <p class="mb-1">
+                                            <strong>Статус:</strong>
+                                            {% if lesson.status == 'completed' %}
+                                                <span class="text-success">Проведено</span>
+                                            {% else %}
+                                                <span class="text-danger">Отменено</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'lesson_detail' lesson.id %}" class="btn btn-sm btn-outline-primary">
+                                            Подробнее
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            Нет прошедших занятий
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<!-- Подключение Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Фильтры периода -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary range-btn" data-range="week">Неделя</button>
+                <button type="button" class="btn btn-outline-primary range-btn" data-range="month">Месяц</button>
+                <button type="button" class="btn btn-outline-primary range-btn" data-range="year">Год</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Контейнер для состояния загрузки -->
+    <div id="loading-indicator" class="text-center py-5" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Загрузка...</span>
+        </div>
+        <p class="mt-2">Загрузка данных отчетов...</p>
+    </div>
+
+    <!-- Контейнер для ошибок -->
+    <div id="error-message" class="alert alert-danger mb-4" style="display: none;"></div>
+
+    <!-- Основной контент отчетов (изначально скрыт) -->
+    <div id="reports-content">
+        <!-- 1. Доход по программам -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Доход по программам</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="revenue-chart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Статистика занятий -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h6>Проведено занятий</h6>
+                        <h2 id="completed-lessons">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h6>Отменено занятий</h6>
+                        <h2 id="canceled-lessons">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h6>Заполняемость</h6>
+                        <h2 id="fill-rate">0%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Популярность программ</h5>
+        </div>
+        <div class="card-body">
+            <div class="chart-container">
+                <canvas id="popularity-chart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/reports.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const reports = new TutorReports({{ request.user.id }});
+
+    // Обработка кнопок фильтрации
+    document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            reports.loadReports(this.dataset.range);
+        });
+    });
+
+    // Первоначальная загрузка
+    reports.loadReports();
+});
+</script>
+{% endblock %}

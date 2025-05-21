@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="jumbotron bg-light p-4 rounded">
+        <h1 class="display-4">Добро пожаловать в Tutoring System!</h1>
+        <p class="lead">Система для организации репетиторских занятий</p>
+        <hr class="my-4">
+
+        {% if user.is_authenticated %}
+            <div class="alert alert-info">
+                <p>Вы вошли как <strong>{{ user.get_full_name }}</strong> ({{ user.get_user_type_display }}).</p>
+                {% if user.user_type == 'tutor' and not user.tutor.is_verified %}
+                    <div class="mt-2">
+                        <a href="{% url 'verification_request' %}" class="btn btn-warning btn-sm">
+                            Отправить документы для верификации
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>Для доступа к системе пожалуйста <a href="{% url 'login' %}" class="btn btn-primary btn-sm">войдите</a>
+            или <a href="{% url 'register' %}" class="btn btn-secondary btn-sm">зарегистрируйтесь</a></p>
+        {% endif %}
+    </div>
+
+    <div class="row mt-4">
+        {% if user.is_authenticated %}
+            {% if user.user_type == 'student' %}
+                <!-- Блок для ученика -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Найти репетитора</h5>
+                            <p class="card-text">Поиск по специализации и рейтингу</p>
+                            <a href="{% url 'tutor_search' %}" class="btn btn-primary">Найти</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Мой профиль</h5>
+                            <p class="card-text">Управление вашими данными</p>
+                            <a href="{% url 'profile' %}" class="btn btn-primary">Редактировать</a>
+                        </div>
+                    </div>
+                </div>
+
+            {% elif user.user_type == 'tutor' %}
+                <!-- Блок для репетитора -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Мое расписание</h5>
+                            <p class="card-text">Управление временными слотами</p>
+                            <a href="{% url 'tutor_schedule' %}" class="btn btn-primary">Управлять</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Мой профиль</h5>
+                            <p class="card-text">Редактирование данных и специализации</p>
+                            <a href="{% url 'profile' %}" class="btn btn-primary">Редактировать</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Моя аналитика</h5>
+                            <p class="card-text">Отчеты и статистика</p>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'reports:dashboard' %}" class="btn btn-primary">
+                                    Основные отчеты
+                                </a>
+                                <a href="{% url 'reports:dashboard' %}?range=week" class="btn btn-outline-secondary">
+                                    За неделю
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% elif user.is_staff %}
+                <!-- Блок для администратора -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Верификация репетиторов</h5>
+                            <p class="card-text">Проверка документов</p>
+                            <a href="{% url 'verification_list' %}" class="btn btn-primary">Проверить</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <!-- Блок для гостей -->
+            <div class="col-md-6 mx-auto">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Начните использовать систему</h5>
+                        <p class="card-text">Выберите тип аккаунта:</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'register' %}?type=student" class="btn btn-primary">Я ученик</a>
+                            <a href="{% url 'register' %}?type=tutor" class="btn btn-secondary">Я репетитор</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

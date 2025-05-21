@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Поиск репетиторов</h5>
+                    <form method="get">
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary">Поиск</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            {% for tutor in tutors %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ tutor.user.get_full_name }}</h5>
+                    <p class="card-text">
+                        <strong>Специализация:</strong> {{ tutor.specialization }}<br>
+                        <strong>Рейтинг:</strong> {{ tutor.rating|default:"Нет оценок" }}<br>
+                        <strong>Статус:</strong> 
+                        {% if tutor.is_verified %}
+                            <span class="badge bg-success">Верифицирован</span>
+                        {% else %}
+                            <span class="badge bg-warning">Не верифицирован</span>
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'tutor_detail' tutor.pk %}" class="btn btn-primary">Записаться</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">Репетиторы не найдены</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

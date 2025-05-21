@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Запросы на верификацию</h2>
+
+    {% if verification_requests %}
+    <div class="table-responsive mt-4">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Репетитор</th>
+                    <th>Телефон</th>
+                    <th>Специализация</th>
+                    <th>Дата подачи</th>
+                    <th>Статус</th>
+                    <th>Документы</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in verification_requests %}
+                <tr>
+                    <td>{{ request.tutor.user.get_full_name }}</td>
+                    <td>{{ request.tutor.user.phone }}</td>
+                    <td>{{ request.tutor.specialization }}</td>
+                    <td>{{ request.submitted_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                        <span class="badge
+                            {% if request.status == 'approved' %}bg-success
+                            {% elif request.status == 'rejected' %}bg-danger
+                            {% else %}bg-warning{% endif %}">
+                            {{ request.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ request.documents.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            Скачать
+                        </a>
+                    </td>
+                    <td>
+                        {% if request.status == 'pending' %}
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="request_id" value="{{ request.id }}">
+                            <button type="submit" name="approve" class="btn btn-sm btn-success">Одобрить</button>
+                            <button type="submit" name="reject" class="btn btn-sm btn-danger">Отклонить</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-4">
+        Нет запросов на верификацию
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

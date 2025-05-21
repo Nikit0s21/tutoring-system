@@ -1,0 +1,100 @@
+/* Стили для навигации по дням */
+.day-navigation {
+    display: flex;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    gap: 8px;
+}
+
+.day-tab {
+    padding: 10px 15px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    user-select: none;
+}
+
+.day-tab:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.day-tab.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для слотов времени */
+.time-slots-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.time-slot {
+    padding: 12px 8px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: white;
+    font-weight: 500;
+    user-select: none;
+}
+
+.time-slot:hover {
+    background-color: #f1f8ff;
+    border-color: #b8daff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.time-slot.selected {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.time-slot.booked {
+    background-color: #f8f9fa;
+    color: #adb5bd;
+    cursor: not-allowed;
+    border-style: dashed;
+    border-color: #e9ecef;
+}
+
+.time-slot.booked:hover {
+    background-color: #f8f9fa;
+    transform: none;
+    box-shadow: none;
+}
+
+.no-slots {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Стили для формы */
+#submit-btn {
+    transition: all 0.3s ease;
+}
+
+#submit-btn:disabled {
+    opacity: 0.65;
+    transform: none;
+}

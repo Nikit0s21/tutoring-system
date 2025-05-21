@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ lesson.topic }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5>Информация о занятии</h5>
+                        <p><strong>Дата и время:</strong> {{ lesson.datetime|date:"l, j F Y" }} в {{ lesson.datetime|time }}</p>
+                        <p><strong>Продолжительность:</strong> {{ lesson.duration }} минут</p>
+                        <p><strong>Статус:</strong>
+                            {% if lesson.status == 'completed' %}
+                                <span class="badge bg-success">Проведено</span>
+                            {% elif lesson.status == 'canceled' %}
+                                <span class="badge bg-danger">Отменено</span>
+                            {% else %}
+                                <span class="badge bg-primary">Запланировано</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        {% if is_tutor %}
+                            <!-- Для репетитора -->
+                            {% if lesson.status == 'planned' and lesson.datetime < now %}
+                                <div class="mt-4">
+                                    <h5>Отметить как проведенное</h5>
+                                    <form method="post" action="{% url 'complete_lesson' lesson.pk %}">
+                                        {% csrf_token %}
+                                        {{ complete_form.as_p }}
+                                        <button type="submit" class="btn btn-success">
+                                            Подтвердить проведение
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <!-- Для ученика -->
+                            {% if lesson.status == 'completed' and not grade_form.instance.grade %}
+                                <div class="mt-4">
+                                    <h5>Оценить занятие</h5>
+                                    <form method="post" action="{% url 'grade_lesson' grade_form.instance.pk %}">
+                                        {% csrf_token %}
+                                        {{ grade_form.as_p }}
+                                        <button type="submit" class="btn btn-primary">
+                                            Отправить оценку
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <h5>Дополнительная информация</h5>
+                        {% if lesson.notes %}
+                            <p>{{ lesson.notes }}</p>
+                        {% else %}
+                            <p class="text-muted">Нет дополнительной информации</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'my_lessons' %}" class="btn btn-secondary">
+                            Назад к списку
+                        </a>
+                        {% if lesson.status == 'planned' %}
+                            <form method="post" action="{% url 'cancel_lesson' lesson.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">
+                                    Отменить занятие
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

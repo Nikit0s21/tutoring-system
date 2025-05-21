@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="{% static 'css/tutor_booking.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h3>{{ tutor.user.get_full_name }}</h3>
+                    <p class="text-muted">{{ tutor.specialization }}</p>
+                    <div class="mb-3">
+                        <span class="badge bg-{% if tutor.is_verified %}success{% else %}warning{% endif %}">
+                            {% if tutor.is_verified %}Верифицирован{% else %}Не верифицирован{% endif %}
+                        </span>
+                        <span class="badge bg-info">Рейтинг: {{ tutor.rating|default:"нет оценок" }}</span>
+                    </div>
+                    <p>{{ tutor.qualification }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Записаться на занятие</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="booking-form">
+                        {% csrf_token %}
+
+                        <div class="day-navigation">
+                            {% for day in available_days %}
+                            <div class="day-tab {% if forloop.first %}active{% endif %}"
+
+                                 data-date="{{ day.date|date:'Y-m-d' }}">
+                                {{ day.date|date:"D, j M" }}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {% for day in available_days %}
+                        <div class="day-content" id="day-{{ day.date|date:'Y-m-d' }}"
+                             style="display: {% if forloop.first %}block{% else %}none{% endif %}">
+                            <h5>{{ day.date|date:"l, j F Y" }}</h5>
+                            <div class="time-slots-container">
+                                {% for slot in day.slots|dictsort:"start" %}
+                                <div class="time-slot {% if not slot.is_available %}booked{% endif %}"
+                                     data-start="{{ slot.start|date:'Y-m-d H:i:s' }}">
+                                    {{ slot.start|time }} - {{ slot.end|time }}
+                                </div>
+                                {% empty %}
+                                <div class="no-slots">
+                                    Нет доступных слотов в этот день
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <div class="mt-4">
+                            <label for="duration" class="form-label">Продолжительность:</label>
+                            <select name="duration" id="duration" class="form-select">
+                                <option value="30">30 минут</option>
+                                <option value="60" selected>1 час</option>
+                                <option value="90">1.5 часа</option>
+                            </select>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label">Программа обучения:</label>
+                            {% if has_programs %}
+                            <div class="program-selector mb-3">
+                                <div class="accordion" id="programsAccordion">
+                                    {% for program in programs %}
+                                    <div class="accordion-item">
+                                        <h3 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#program{{ program.id }}"
+                                                    aria-expanded="false">
+                                                <div class="d-flex justify-content-between w-100 pe-2">
+                                                    <span class="program-title">{{ program.name }}</span>
+                                                    <span class="badge bg-primary rounded-pill ms-2">
+                                                        {{ program.price_per_hour }} ₽/час
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </h3>
+                                        <div id="program{{ program.id }}" class="accordion-collapse collapse"
+                                             data-bs-parent="#programsAccordion">
+                                            <div class="accordion-body">
+                                                <div class="d-flex flex-column">
+                                                    <div class="program-description mb-2">
+                                                        {{ program.description|linebreaks|default:"Описание отсутствует" }}
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <a href="{{ program.get_absolute_url }}"
+                                                           class="btn btn-sm btn-outline-info"
+                                                           target="_blank">
+                                                            Подробнее о программе
+                                                        </a>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                   name="program" value="{{ program.id }}"
+                                                                   id="program{{ program.id }}_radio"
+                                                                   {% if forloop.first %}checked{% endif %}>
+                                                            <label class="form-check-label" for="program{{ program.id }}_radio">
+                                                                Выбрать
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% if programs_count > 10 and not show_all_programs %}
+                                <div class="alert alert-info mt-2">
+                                    Показано 10 из {{ programs_count }} программ.
+                                    <a href="{{ tutor.get_absolute_url }}?show_all_programs=1" class="alert-link">
+                                        Показать все
+                                    </a>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                            <div class="alert alert-warning">
+                                У этого репетитора пока нет программ обучения
+                            </div>
+
+                            {% endif %}
+                        </div>
+                        <div class="mt-3">
+                            <label for="topic" class="form-label">Тема занятия:</label>
+                            <input type="text" name="topic" id="topic" class="form-control" required>
+                        </div>
+
+                        <input type="hidden" name="start_time" id="selected-time">
+
+                        <button type="submit" class="btn btn-primary mt-3" id="submit-btn" disabled>
+                            Подтвердить запись
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tutor_booking.js' %}"></script>
+{% endblock %}
