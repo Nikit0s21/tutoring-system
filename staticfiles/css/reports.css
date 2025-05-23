@@ -1,0 +1,35 @@
+.card {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+#revenue-chart, #popularity-chart {
+    min-height: 300px;
+}
+/* Стили для контейнеров графиков */
+.chart-container {
+    position: relative;
+    width: 100%;
+    min-height: 250px;
+    max-height: 300px;
+    margin: 0 auto;
+}
+
+/* Адаптивные размеры для мобильных устройств */
+@media (max-width: 768px) {
+    .chart-container {
+        min-height: 200px;
+        max-height: 250px;
+    }
+}
+
+/* Стили для canvas */
+.chart-canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 300px;
+}

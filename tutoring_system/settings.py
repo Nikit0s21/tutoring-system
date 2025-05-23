@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-2#+ryieshyd96ntgp%1rd0v)oub**4jiz#972i3jut66py$6p2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-ALLOWED_HOSTS = ['tutor.pythonanywhere.com', 'localhost']  # Укажите ваш домен
+DEBUG = True
+ALLOWED_HOSTS = []  # Укажите ваш домен
 
 
 # Application definition

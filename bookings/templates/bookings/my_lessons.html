@@ -94,7 +94,11 @@
                                             {% if lesson.status == 'completed' %}
                                                 <span class="text-success">Проведено</span>
                                             {% else %}
-                                                <span class="text-danger">Отменено</span>
+                                                {% if lesson.status == 'planned' %}
+                                                    <span class="text-warning">Отметить</span>
+                                                {% else %}
+                                                    <span class="text-danger">Отменено</span>
+                                                {% endif %}
                                             {% endif %}
                                         </p>
                                     </div>

@@ -126,7 +126,6 @@ class Lesson(models.Model):
         super().save(*args, **kwargs)
 
     def update_tutor_rating(self):
-        """Обновляет рейтинг репетитора на основе оценок"""
         completed_lessons = Lesson.objects.filter(
             tutor=self.tutor,
             status='completed',

@@ -11,6 +11,7 @@ from .forms import TutorSearchForm
 from schedule.models import TimeSlot
 from users.forms import CompleteLessonForm, GradeLessonForm
 
+
 def tutor_search(request):
     form = TutorSearchForm(request.GET or None)
     tutors = Tutor.objects.filter(is_verified=True)
@@ -51,7 +52,6 @@ class LessonDetailView(LoginRequiredMixin, DetailView):
 
 
 from django.views.generic.edit import UpdateView
-from django.urls import reverse
 
 
 class CompleteLessonView(LoginRequiredMixin, UpdateView):
@@ -86,6 +86,7 @@ class GradeLessonView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('lesson_detail', kwargs={'pk': self.object.lesson.pk})
 
+
 class CancelLessonView(LoginRequiredMixin, DeleteView):
     model = Lesson
     template_name = 'bookings/lesson_confirm_cancel.html'
@@ -106,6 +107,7 @@ class CancelLessonView(LoginRequiredMixin, DeleteView):
 
         messages.success(self.request, "Занятие успешно отменено. Слот освобожден.")
         return redirect(self.get_success_url())
+
 
 class MyLessonsView(LoginRequiredMixin, ListView):
     template_name = 'bookings/my_lessons.html'
@@ -147,7 +149,6 @@ class MyLessonsView(LoginRequiredMixin, ListView):
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import timedelta
-from django.http import HttpResponseBadRequest
 from django.urls import reverse
 from django.contrib import messages
 
@@ -338,4 +339,3 @@ class TutorDetailView(DetailView):
         # Если что-то пошло не так, возвращаем с ошибкой
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
-

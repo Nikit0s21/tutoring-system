@@ -98,3 +98,53 @@
     opacity: 0.65;
     transform: none;
 }
+    .program-option {
+        position: relative;
+        transition: all 0.2s;
+    }
+    .program-option:hover {
+        background-color: #f8f9fa;
+    }
+    .program-detail-link {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 30px;
+        height: 100%;
+        opacity: 0;
+    }
+    .form-check-input:checked + .form-check-label {
+        font-weight: 500;
+    }
+        .program-selector {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .program-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 70%;
+    }
+    .accordion-button:not(.collapsed) .program-title {
+        white-space: normal;
+    }
+    .program-description {
+        max-height: 150px;
+        overflow-y: auto;
+        font-size: 0.9rem;
+        padding: 5px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+    /* Скрываем стандартный маркер аккордеона */
+    .accordion-button::after {
+        display: none;
+    }
+    /* Стили для выбранной программы */
+    .accordion-item {
+        border-left: 3px solid transparent;
+    }
+    .form-check-input:checked ~ .accordion-item {
+        border-left-color: #0d6efd;
+    }
